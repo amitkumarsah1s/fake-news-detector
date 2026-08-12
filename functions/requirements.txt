@@ -1,0 +1,7 @@
+firebase-functions~=0.5.0
+firebase-admin
+scikit-learn
+pandas
+numpy
+flask
+flask-cors
