@@ -44,9 +44,14 @@ def handle_prediction():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# GET check route
+@app.route('/', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'API Online', 'message': 'Fake News Detection ML API is running successfully!'})
+
+# Prediction routes
 @app.route('/predict', methods=['POST'])
 @app.route('/api/predict', methods=['POST'])
-@app.route('/', methods=['POST'])
 def predict():
     return handle_prediction()
 

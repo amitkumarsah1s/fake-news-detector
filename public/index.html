@@ -1,194 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Fake News Detector</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
-      background: #090d16;
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+      background: #0f172a;
       color: #f8fafc;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      align-items: center;
-      padding: 24px;
+      padding: 20px;
     }
-
     .container {
+      max-width: 700px;
       width: 100%;
-      max-width: 680px;
-      background: rgba(17, 24, 39, 0.7);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 24px;
-      padding: 40px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      background: #1e293b;
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      border: 1px solid #334155;
     }
-
-    .header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.3);
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.2);
       color: #818cf8;
       padding: 6px 14px;
-      border-radius: 9999px;
+      border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
-
     h1 {
       font-size: 2.2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       margin-bottom: 8px;
+      color: #ffffff;
+      text-align: center;
     }
-
     p.subtitle {
+      text-align: center;
       color: #94a3b8;
-      font-size: 0.95rem;
+      margin-bottom: 25px;
     }
-
-    .input-group {
-      margin-bottom: 24px;
-    }
-
     textarea {
       width: 100%;
       height: 180px;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      color: #f1f5f9;
-      padding: 18px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 15px;
+      color: #f8fafc;
       font-size: 1rem;
-      line-height: 1.6;
       resize: vertical;
       outline: none;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s;
     }
-
     textarea:focus {
       border-color: #6366f1;
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
     }
-
-    textarea::placeholder {
-      color: #475569;
-    }
-
-    .btn-action {
+    button {
       width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      background: #4f46e5;
       color: #ffffff;
-      font-size: 1rem;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 1.05rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
+      margin-top: 15px;
+      transition: background 0.2s;
     }
-
-    .btn-action:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+    button:hover {
+      background: #4338ca;
     }
-
-    .btn-action:disabled {
-      opacity: 0.6;
+    button:disabled {
+      background: #334155;
       cursor: not-allowed;
-      transform: none;
     }
-
     .result-card {
-      margin-top: 28px;
+      margin-top: 25px;
       padding: 20px;
-      border-radius: 16px;
+      border-radius: 10px;
       display: none;
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.3s ease-in-out;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     .result-card.fake {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
       color: #fca5a5;
     }
-
     .result-card.real {
-      background: rgba(34, 197, 94, 0.1);
-      border: 1px solid rgba(34, 197, 94, 0.3);
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid #22c55e;
       color: #86efac;
     }
-
-    .result-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .result-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 6px;
     }
-
-    .result-desc {
-      font-size: 0.88rem;
-      opacity: 0.85;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="header">
-      <div class="badge">✨ NLP & Machine Learning</div>
-      <h1>AI Fake News Detector</h1>
-      <p class="subtitle">Paste news article content below to verify its authenticity instantly.</p>
+    <div style="text-align: center;">
+      <span class="badge">✨ NLP & Machine Learning</span>
     </div>
+    <h1>AI Fake News Detector</h1>
+    <p class="subtitle">Paste news article content below to verify its authenticity instantly.</p>
 
-    <div class="input-group">
-      <textarea id="newsInput" placeholder="Paste article text here..."></textarea>
-    </div>
-
-    <button class="btn-action" onclick="analyzeNews()" id="submitBtn">
-      <span>Analyze Content</span>
-    </button>
+    <textarea id="newsInput" placeholder="Paste news article text here..."></textarea>
+    <button id="submitBtn" onclick="analyzeNews()">Analyze Content</button>
 
     <div id="resultCard" class="result-card">
-      <div class="result-title" id="resultTitle"></div>
-      <div class="result-desc" id="resultDesc"></div>
+      <h3 id="resultTitle"></h3>
+      <p id="resultDesc"></p>
     </div>
   </div>
 
@@ -209,9 +149,8 @@
       btn.disabled = true;
       resultCard.style.display = 'none';
 
-      // Live Server (5500) se direct Python Flask (5001) ko target karein
-      const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-      const apiUrl = isLocal ? 'http://127.0.0.1:5001/predict' : '/api/predict';
+      // Live Render API URL
+      const apiUrl = 'https://fake-news-detector-wo4y.onrender.com/predict';
 
       try {
         const response = await fetch(apiUrl, {
@@ -246,5 +185,6 @@
       }
     }
   </script>
+
 </body>
 </html>
